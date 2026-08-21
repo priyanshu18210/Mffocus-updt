@@ -1,0 +1,1244 @@
+/* ==========================================================================
+   MFFOCUS COMPANION — "STAY WITH ME" COMPLETE REBUILD SPECIFICATION
+   Apple-level simplicity + Awwwards-level motion + Warm Human Character Presence
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS VARIABLES & DESIGN TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+    --comp-bg-glass: rgba(10, 14, 22, 0.92);
+    --comp-bg-card: rgba(15, 20, 32, 0.96);
+    --comp-border: rgba(100, 255, 218, 0.22);
+    --comp-border-glow: rgba(100, 255, 218, 0.55);
+    --comp-accent-cyan: #64ffda;
+    --comp-accent-blue: #8ab4f8;
+    --comp-accent-gold: #ffd700;
+    --comp-accent-green: #30d158;
+    --comp-accent-red: #ff453a;
+    --comp-accent-purple: #d884ff;
+    --comp-text-main: #f8fafc;
+    --comp-text-sub: #94a3b8;
+    --comp-text-muted: #64748b;
+    --comp-shadow: 0 25px 70px rgba(0, 0, 0, 0.85);
+    --comp-glow: 0 0 35px rgba(100, 255, 218, 0.18);
+}
+
+/* --------------------------------------------------------------------------
+   2. FLOATING COMPANION WIDGET (CORNER PRESENCE)
+   -------------------------------------------------------------------------- */
+#mffocus-companion-widget {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 330px;
+    background: var(--comp-bg-glass);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid var(--comp-border);
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: var(--comp-shadow), var(--comp-glow);
+    z-index: 8500;
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, border-color 0.3s ease;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+#mffocus-companion-widget.active {
+    display: flex;
+    animation: companionSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#mffocus-companion-widget.minimized {
+    display: none !important;
+}
+
+#mffocus-companion-widget:hover {
+    border-color: var(--comp-border-glow);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 40px rgba(100, 255, 218, 0.28);
+}
+
+/* Top bar inside companion card */
+.comp-card-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.comp-brand-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comp-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--comp-accent-cyan);
+    box-shadow: 0 0 10px var(--comp-accent-cyan);
+    animation: compPulseDot 2.2s infinite ease-in-out;
+}
+
+.comp-status-dot.paused {
+    background: var(--comp-accent-gold);
+    box-shadow: 0 0 10px var(--comp-accent-gold);
+    animation: none;
+}
+
+.comp-status-dot.rescue {
+    background: var(--comp-accent-green);
+    box-shadow: 0 0 12px var(--comp-accent-green);
+}
+
+.comp-status-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--comp-accent-cyan);
+}
+
+.comp-top-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.comp-icon-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--comp-text-sub);
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: all 0.2s ease;
+}
+
+.comp-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.06);
+}
+
+/* Character & Speech Bubble Area */
+.comp-avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+}
+
+.comp-avatar-wrapper {
+    position: relative;
+    width: 78px;
+    height: 78px;
+    flex-shrink: 0;
+    border-radius: 22px;
+    background: radial-gradient(circle at 50% 30%, rgba(100, 255, 218, 0.16), rgba(12, 16, 26, 0.85));
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(100, 255, 218, 0.1);
+}
+
+.comp-speech-bubble {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 10px 14px;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: var(--comp-text-main);
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.comp-speech-bubble::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.comp-speech-text {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Session Info & Progress Ring */
+.comp-session-box {
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.comp-task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-width: 190px;
+}
+
+.comp-task-goal {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.2px;
+}
+
+.comp-task-time-left {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--comp-accent-cyan);
+    font-family: 'JetBrains Mono', monospace, sans-serif;
+}
+
+.comp-progress-circle-wrap {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comp-progress-svg {
+    transform: rotate(-90deg);
+    width: 48px;
+    height: 48px;
+}
+
+.comp-circle-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 3.5;
+}
+
+.comp-circle-bar {
+    fill: none;
+    stroke: var(--comp-accent-cyan);
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-dasharray: 125.6;
+    stroke-dashoffset: 125.6;
+    transition: stroke-dashoffset 0.6s ease;
+}
+
+.comp-pct-text {
+    position: absolute;
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace, sans-serif;
+}
+
+/* Bottom Actions inside Widget (Strictly Focus & Pause Controls, NO BREAKS during focus) */
+.comp-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comp-action-btn {
+    flex: 1;
+    padding: 9px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.comp-btn-stay {
+    background: rgba(100, 255, 218, 0.12);
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    color: var(--comp-accent-cyan);
+}
+
+.comp-btn-stay.active {
+    background: var(--comp-accent-cyan);
+    color: #050505;
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
+}
+
+.comp-btn-stay:hover {
+    background: rgba(100, 255, 218, 0.22);
+}
+
+.comp-btn-pause {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--comp-text-main);
+}
+
+.comp-btn-pause:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.28);
+}
+
+/* --------------------------------------------------------------------------
+   3. MINIMIZED FLOATING AVATAR PILL / ORB
+   -------------------------------------------------------------------------- */
+#mffocus-companion-pill {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: var(--comp-bg-glass);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 2px solid var(--comp-accent-cyan);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(100, 255, 218, 0.35);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 8500;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+    user-select: none;
+}
+
+#mffocus-companion-pill.active {
+    display: flex;
+    animation: companionPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#mffocus-companion-pill:hover {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.9), 0 0 35px rgba(100, 255, 218, 0.55);
+}
+
+.comp-pill-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.comp-pill-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--comp-accent-cyan);
+    color: #050505;
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   4. COMPANION SVG CHARACTER & SUBTLE LIFE ANIMATIONS
+   -------------------------------------------------------------------------- */
+.companion-svg-character {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.comp-char-body {
+    transform-origin: center bottom;
+    animation: compBodyBreathe 3.8s ease-in-out infinite;
+}
+
+.comp-char-eyes {
+    transform-origin: center;
+    animation: compBlink 4.2s ease-in-out infinite;
+}
+
+.comp-aura-glow {
+    filter: blur(8px);
+    opacity: 0.45;
+    animation: compAuraPulse 3.2s ease-in-out infinite alternate;
+}
+
+.comp-char-writing-hand {
+    transform-origin: 30px 50px;
+    animation: compWriteHand 2s ease-in-out infinite alternate;
+}
+
+@keyframes compBodyBreathe {
+    0%, 100% { transform: translateY(0) scaleY(1); }
+    50% { transform: translateY(-2px) scaleY(1.02); }
+}
+
+@keyframes compBlink {
+    0%, 94%, 100% { transform: scaleY(1); }
+    96%, 98% { transform: scaleY(0.1); }
+}
+
+@keyframes compAuraPulse {
+    0% { opacity: 0.3; filter: blur(6px); }
+    100% { opacity: 0.6; filter: blur(10px); }
+}
+
+@keyframes compWriteHand {
+    0% { transform: rotate(0deg) translate(0, 0); }
+    50% { transform: rotate(-4deg) translate(2px, -1px); }
+    100% { transform: rotate(3deg) translate(-1px, 2px); }
+}
+
+@keyframes compPulseDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+@keyframes companionSlideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes companionPopIn {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes companionShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}
+
+/* --------------------------------------------------------------------------
+   5. COMPANION MODALS ARCHITECTURE & GLASSMORPHISM
+   -------------------------------------------------------------------------- */
+.comp-modal-card {
+    background: var(--comp-bg-card) !important;
+    backdrop-filter: blur(32px) !important;
+    -webkit-backdrop-filter: blur(32px) !important;
+    border: 1px solid var(--comp-border) !important;
+    border-radius: 28px !important;
+    box-shadow: 0 35px 100px rgba(0, 0, 0, 0.95), 0 0 45px rgba(100, 255, 218, 0.16) !important;
+    max-width: 540px;
+    width: 92%;
+    padding: 32px !important;
+    color: var(--comp-text-main);
+    box-sizing: border-box;
+    position: relative;
+    overflow: visible !important;
+}
+
+.comp-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.comp-modal-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.comp-modal-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.comp-modal-title {
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.3px;
+}
+
+.comp-modal-subtitle {
+    margin: 4px 0 0 0;
+    font-size: 0.88rem;
+    color: var(--comp-text-sub);
+    font-weight: 500;
+}
+
+.comp-modal-close-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--comp-text-sub);
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+}
+
+.comp-modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Duration Grid */
+.comp-duration-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.comp-duration-chip {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 12px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.comp-duration-chip:hover {
+    background: rgba(100, 255, 218, 0.1);
+    border-color: rgba(100, 255, 218, 0.4);
+    transform: translateY(-2px);
+}
+
+.comp-duration-chip.active {
+    background: rgba(100, 255, 218, 0.16);
+    border-color: var(--comp-accent-cyan);
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+}
+
+.comp-duration-val {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace, sans-serif;
+}
+
+.comp-duration-unit {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--comp-text-sub);
+    text-transform: uppercase;
+}
+
+.comp-duration-chip.active .comp-duration-val,
+.comp-duration-chip.active .comp-duration-unit {
+    color: var(--comp-accent-cyan);
+}
+
+/* Inputs */
+.comp-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.comp-input-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--comp-text-sub);
+    text-transform: uppercase;
+}
+
+.comp-text-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.comp-text-input:focus {
+    border-color: var(--comp-accent-cyan);
+    box-shadow: 0 0 20px rgba(100, 255, 218, 0.25);
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.comp-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.comp-chip-quick {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 0.78rem;
+    color: var(--comp-text-sub);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.comp-chip-quick:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Companion Preview Box */
+.comp-preview-bubble {
+    background: linear-gradient(135deg, rgba(100, 255, 218, 0.08), rgba(138, 180, 248, 0.04));
+    border: 1px solid rgba(100, 255, 218, 0.25);
+    border-radius: 18px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.comp-preview-avatar {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: rgba(100, 255, 218, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(100, 255, 218, 0.3);
+}
+
+.comp-preview-text {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--comp-text-main);
+    line-height: 1.45;
+    font-style: italic;
+}
+
+/* Modal Buttons */
+.comp-btn-primary {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--comp-accent-cyan), #38ef7d);
+    color: #050505;
+    font-weight: 900;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(100, 255, 218, 0.35);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.comp-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 40px rgba(100, 255, 218, 0.5);
+}
+
+.comp-btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comp-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   6. EARLY PAUSE INTERVENTION CHOICES
+   -------------------------------------------------------------------------- */
+.comp-intervention-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.comp-choice-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.comp-choice-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+.comp-choice-card.choice-life:hover {
+    border-color: var(--comp-accent-cyan);
+    box-shadow: 0 0 20px rgba(100, 255, 218, 0.15);
+}
+
+.comp-choice-card.choice-struggling:hover {
+    border-color: var(--comp-accent-gold);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+}
+
+.comp-choice-card.choice-stop:hover {
+    border-color: var(--comp-accent-red);
+    box-shadow: 0 0 20px rgba(255, 69, 58, 0.15);
+}
+
+.comp-choice-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.comp-choice-icon {
+    font-size: 1.4rem;
+}
+
+.comp-choice-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.comp-choice-title {
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.comp-choice-desc {
+    font-size: 0.8rem;
+    color: var(--comp-text-sub);
+}
+
+.comp-choice-arrow {
+    color: var(--comp-text-sub);
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
+.comp-choice-card:hover .comp-choice-arrow {
+    transform: translateX(4px);
+    color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   7. 3D COMPANION PHONE RITUAL (SIGNATURE INTERACTION)
+   -------------------------------------------------------------------------- */
+.comp-phone-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+    margin: 20px 0;
+}
+
+.comp-3d-phone {
+    width: 260px;
+    height: 360px;
+    background: #000;
+    border-radius: 36px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(100, 255, 218, 0.28);
+    position: relative;
+    padding: 18px 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    transform: rotateX(8deg) rotateY(-4deg);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.comp-3d-phone:hover {
+    transform: rotateX(0deg) rotateY(0deg) translateY(-4px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(100, 255, 218, 0.45);
+}
+
+.comp-phone-notch {
+    width: 70px;
+    height: 14px;
+    background: #111;
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+
+.comp-phone-screen {
+    flex: 1;
+    width: 100%;
+    background: radial-gradient(circle at 50% 30%, #131d2e, #090e17);
+    border-radius: 24px;
+    border: 1px solid rgba(100, 255, 218, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 12px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.comp-phone-prompt {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--comp-text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+}
+
+.comp-phone-code-display {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--comp-accent-cyan);
+    letter-spacing: 6px;
+    font-family: 'JetBrains Mono', monospace, sans-serif;
+    margin: 8px 0;
+    text-shadow: 0 0 18px rgba(100, 255, 218, 0.6);
+    animation: compCodePulse 2.5s infinite ease-in-out;
+}
+
+.comp-phone-time-left {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--comp-accent-gold);
+    margin-top: 4px;
+}
+
+@keyframes compCodePulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.04); opacity: 0.88; }
+}
+
+/* 5-Digit Boxes */
+.comp-digit-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.comp-digit-box {
+    width: 48px;
+    height: 58px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1.5px solid rgba(255, 255, 255, 0.16);
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 900;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace, sans-serif;
+    outline: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+}
+
+.comp-digit-box:focus {
+    border-color: var(--comp-accent-cyan);
+    box-shadow: 0 0 20px rgba(100, 255, 218, 0.4);
+    background: rgba(0, 0, 0, 0.75);
+    transform: translateY(-2px);
+}
+
+.comp-digit-inputs.error {
+    animation: companionShake 0.4s ease-in-out;
+}
+
+.comp-digit-inputs.error .comp-digit-box {
+    border-color: var(--comp-accent-red);
+    box-shadow: 0 0 15px rgba(255, 69, 58, 0.35);
+}
+
+.comp-digit-error-text {
+    color: var(--comp-accent-red);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    min-height: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   8. REBUILT CUSTOM GLASSMORPHIC SETTINGS & DROPDOWNS
+   -------------------------------------------------------------------------- */
+.comp-settings-scroll-body {
+    max-height: 65vh;
+    overflow-y: auto;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.comp-settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.comp-section-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--comp-accent-cyan);
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/* Personality Segmented Cards */
+.comp-personality-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.comp-personality-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.comp-personality-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.comp-personality-card.active {
+    background: rgba(100, 255, 218, 0.12);
+    border-color: var(--comp-accent-cyan);
+    box-shadow: 0 0 20px rgba(100, 255, 218, 0.25);
+}
+
+.comp-pcard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.comp-pcard-title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.comp-personality-card.active .comp-pcard-title {
+    color: var(--comp-accent-cyan);
+}
+
+.comp-pcard-desc {
+    font-size: 0.76rem;
+    color: var(--comp-text-sub);
+    line-height: 1.4;
+}
+
+/* Custom Glassmorphic Select Dropdown */
+.comp-custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.comp-select-trigger {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 10px 14px;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.comp-select-trigger:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.comp-select-options {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: rgba(15, 20, 32, 0.98);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid var(--comp-border);
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+    padding: 6px;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 100000;
+}
+
+.comp-select-options.open {
+    display: flex;
+    animation: companionPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.comp-select-option {
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--comp-text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.15s ease;
+}
+
+.comp-select-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.comp-select-option.selected {
+    background: rgba(100, 255, 218, 0.15);
+    color: var(--comp-accent-cyan);
+    font-weight: 700;
+}
+
+/* Setting Row */
+.comp-setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+}
+
+.comp-setting-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 290px;
+}
+
+.comp-setting-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.comp-setting-desc {
+    font-size: 0.76rem;
+    color: var(--comp-text-sub);
+}
+
+/* Switch */
+.comp-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.comp-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.comp-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.15);
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.comp-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.comp-toggle-switch input:checked + .comp-toggle-slider {
+    background-color: var(--comp-accent-cyan);
+}
+
+.comp-toggle-switch input:checked + .comp-toggle-slider:before {
+    transform: translateX(20px);
+    background-color: #050505;
+}
+
+/* --------------------------------------------------------------------------
+   9. RECORDS & EVOLUTION STATS
+   -------------------------------------------------------------------------- */
+.comp-records-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.comp-record-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.comp-record-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--comp-text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.comp-record-val {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace, sans-serif;
+}
+
+.comp-record-card.highlight .comp-record-val {
+    color: var(--comp-accent-cyan);
+}
+
+/* --------------------------------------------------------------------------
+   10. RESPONSIVENESS & ACCESSIBILITY
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    #mffocus-companion-widget {
+        bottom: 16px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        border-radius: 20px;
+        padding: 14px;
+    }
+
+    .comp-modal-card {
+        padding: 24px 18px !important;
+        border-radius: 24px !important;
+    }
+
+    .comp-duration-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+
+    .comp-personality-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .comp-3d-phone {
+        width: 220px;
+        height: 320px;
+    }
+
+    .comp-digit-box {
+        width: 40px;
+        height: 50px;
+        font-size: 1.35rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .comp-char-body,
+    .comp-char-eyes,
+    .comp-aura-glow,
+    .comp-char-writing-hand,
+    .comp-status-dot,
+    .comp-phone-code-display {
+        animation: none !important;
+    }
+
+    #mffocus-companion-widget,
+    #mffocus-companion-pill,
+    .comp-modal-card {
+        transition: none !important;
+    }
+}

@@ -1,0 +1,512 @@
+
+<!-- ==========================================================================
+     MFFOCUS COMPANION — "STAY WITH ME" FLOATING WIDGET & MODALS (REBUILT)
+     ========================================================================== -->
+
+<!-- 1. FLOATING COMPANION WIDGET (CORNER PRESENCE) -->
+<div id="mffocus-companion-widget">
+    <div class="comp-card-topbar">
+        <div class="comp-brand-badge">
+            <div class="comp-status-dot" id="comp-status-dot"></div>
+            <span class="comp-status-label" id="comp-status-label">STUDYING</span>
+        </div>
+        <div class="comp-top-controls">
+            <button class="comp-icon-btn" onclick="MFFocusCompanion.openSettingsModal()" title="Companion Settings" aria-label="Companion Settings"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
+            <button class="comp-icon-btn" onclick="MFFocusCompanion.openRecordsModal()" title="Focus Records" aria-label="Focus Records"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 4h16v7a8 8 0 0 1-16 0V4z"></path><path d="M12 17v4"></path><path d="M8 21h8"></path></svg></button>
+            <button class="comp-icon-btn" onclick="MFFocusCompanion.minimizeWidget()" title="Minimize Companion">_</button>
+        </div>
+    </div>
+
+    <!-- Character & Speech Bubble Area -->
+    <div class="comp-avatar-row">
+        <div class="comp-avatar-wrapper comp-avatar-slot"></div>
+        <div class="comp-speech-bubble" id="comp-speech-bubble" style="opacity: 0;">
+            <p class="comp-speech-text" id="comp-speech-text">Ready?</p>
+        </div>
+    </div>
+
+    <!-- Session Info & Progress Ring -->
+    <div class="comp-session-box">
+        <div class="comp-task-info">
+            <div class="comp-task-goal" id="comp-widget-goal">Focus Sprint</div>
+            <div class="comp-task-time-left" id="comp-widget-time-left">00:00 remaining</div>
+        </div>
+        <div class="comp-progress-circle-wrap">
+            <svg class="comp-progress-svg" viewBox="0 0 48 48">
+                <circle class="comp-circle-bg" cx="24" cy="24" r="20"></circle>
+                <circle class="comp-circle-bar" id="comp-circle-bar" cx="24" cy="24" r="20"></circle>
+            </svg>
+            <span class="comp-pct-text" id="comp-widget-pct">0%</span>
+        </div>
+    </div>
+
+    <!-- Bottom Actions inside Widget (Strictly Focus & Pause Controls, NO BREAKS during active focus) -->
+    <div class="comp-card-actions">
+        <button class="comp-action-btn comp-btn-stay" id="comp-stay-mode-btn" onclick="MFFocusCompanion.toggleStayWithMe()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.15em; margin-right: 6px;"><path d="M11 17l-5-5a3 3 0 0 1 4.24-4.24L12 9.5l1.76-1.74a3 3 0 0 1 4.24 4.24L13 17"></path><path d="M14 14l3.5 3.5a2.5 2.5 0 0 1-3.5 3.5L8.5 15.5"></path><path d="M2 13l3.5-3.5"></path><path d="M22 13l-3.5-3.5"></path></svg>Stay With Me
+        </button>
+        <button class="comp-action-btn comp-btn-pause" onclick="MFFocusCompanion.requestPauseOrStop()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.15em; margin-right: 6px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>Pause / Stop
+        </button>
+    </div>
+</div>
+
+<!-- 2. MINIMIZED FLOATING PILL / ORB -->
+<div id="mffocus-companion-pill" onclick="MFFocusCompanion.expandWidget()" title="Expand Study Companion">
+    <div class="comp-pill-avatar comp-avatar-slot"></div>
+    <div class="comp-pill-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5a3 3 0 0 1 4.24-4.24L12 9.5l1.76-1.74a3 3 0 0 1 4.24 4.24L13 17"></path><path d="M14 14l3.5 3.5a2.5 2.5 0 0 1-3.5 3.5L8.5 15.5"></path><path d="M2 13l3.5-3.5"></path><path d="M22 13l-3.5-3.5"></path></svg></div>
+</div>
+
+<!-- 3. FIRST-TIME TRANSPARENT CONSENT MODAL -->
+<div id="companion-consent-modal" class="modal-overlay" style="display: none; z-index: 99990;">
+    <div class="modal-content comp-modal-card">
+        <div class="comp-modal-header">
+            <div class="comp-modal-title-group">
+                <span class="comp-modal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5a3 3 0 0 1 4.24-4.24L12 9.5l1.76-1.74a3 3 0 0 1 4.24 4.24L13 17"></path><path d="M14 14l3.5 3.5a2.5 2.5 0 0 1-3.5 3.5L8.5 15.5"></path><path d="M2 13l3.5-3.5"></path><path d="M22 13l-3.5-3.5"></path></svg></span>
+                <div>
+                    <h2 class="comp-modal-title">Meet Your Study Companion</h2>
+                    <p class="comp-modal-subtitle">You don't have to study alone anymore.</p>
+                </div>
+            </div>
+            <button class="comp-modal-close-btn" onclick="MFFocusCompanion.declineConsent()">&times;</button>
+        </div>
+
+        <div style="font-size: 0.95rem; line-height: 1.65; color: #e2e8f0; margin-bottom: 24px; display: flex; flex-direction: column; gap: 14px;">
+            <p style="margin: 0;">“I'll stay with you while you study.”</p>
+            <p style="margin: 0; color: var(--comp-text-sub);">“I'll help you keep your chosen study commitment, encourage you during long sessions, and provide gentle accountability.”</p>
+            
+            <div style="background: rgba(100, 255, 218, 0.08); border: 1px solid rgba(100, 255, 218, 0.25); border-radius: 16px; padding: 14px 18px; font-size: 0.88rem; color: #64ffda;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.15em; margin-right: 6px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><strong>100% Private &amp; Website-Only:</strong> I cannot see your other tabs, browsing history, passwords, screen, microphone, or camera. You are always in control.
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+            <button class="comp-btn-secondary" style="flex: 1;" onclick="MFFocusCompanion.declineConsent()">Not Now</button>
+            <button class="comp-btn-primary" style="flex: 2;" onclick="MFFocusCompanion.acceptConsent()">I UNDERSTAND &amp; CONTINUE</button>
+        </div>
+    </div>
+</div>
+
+<!-- 4. SESSION SETUP MODAL -->
+<div id="companion-setup-modal" class="modal-overlay" style="display: none; z-index: 99990;">
+    <div class="modal-content comp-modal-card">
+        <div class="comp-modal-header">
+            <div class="comp-modal-title-group">
+                <span class="comp-modal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5a3 3 0 0 1 4.24-4.24L12 9.5l1.76-1.74a3 3 0 0 1 4.24 4.24L13 17"></path><path d="M14 14l3.5 3.5a2.5 2.5 0 0 1-3.5 3.5L8.5 15.5"></path><path d="M2 13l3.5-3.5"></path><path d="M22 13l-3.5-3.5"></path></svg></span>
+                <div>
+                    <h2 class="comp-modal-title">Let's study together.</h2>
+                    <p class="comp-modal-subtitle">How long do you want to stay focused?</p>
+                </div>
+            </div>
+            <button class="comp-modal-close-btn" onclick="MFFocusCompanion.closeModal('companion-setup-modal')">&times;</button>
+        </div>
+
+        <!-- Duration Preset Grid -->
+        <div class="comp-duration-grid">
+            <div class="comp-duration-chip" data-val="15" onclick="MFFocusCompanion.selectDuration(15, this)">
+                <span class="comp-duration-val">15</span>
+                <span class="comp-duration-unit">MIN</span>
+            </div>
+            <div class="comp-duration-chip" data-val="25" onclick="MFFocusCompanion.selectDuration(25, this)">
+                <span class="comp-duration-val">25</span>
+                <span class="comp-duration-unit">MIN</span>
+            </div>
+            <div class="comp-duration-chip" data-val="30" onclick="MFFocusCompanion.selectDuration(30, this)">
+                <span class="comp-duration-val">30</span>
+                <span class="comp-duration-unit">MIN</span>
+            </div>
+            <div class="comp-duration-chip" data-val="45" onclick="MFFocusCompanion.selectDuration(45, this)">
+                <span class="comp-duration-val">45</span>
+                <span class="comp-duration-unit">MIN</span>
+            </div>
+            <div class="comp-duration-chip" data-val="60" onclick="MFFocusCompanion.selectDuration(60, this)">
+                <span class="comp-duration-val">60</span>
+                <span class="comp-duration-unit">MIN</span>
+            </div>
+            <div class="comp-duration-chip active" data-val="90" onclick="MFFocusCompanion.selectDuration(90, this)">
+                <span class="comp-duration-val">90</span>
+                <span class="comp-duration-unit">MIN</span>
+            </div>
+            <div class="comp-duration-chip" data-val="120" onclick="MFFocusCompanion.selectDuration(120, this)">
+                <span class="comp-duration-val">120</span>
+                <span class="comp-duration-unit">MIN</span>
+            </div>
+            <div class="comp-duration-chip" data-val="custom" onclick="MFFocusCompanion.selectDuration('custom', this)">
+                <span class="comp-duration-val"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></span>
+                <span class="comp-duration-unit">CUSTOM</span>
+            </div>
+        </div>
+
+        <!-- Custom Duration input -->
+        <div id="comp-custom-duration-group" class="comp-input-group" style="display: none;">
+            <label class="comp-input-label">CUSTOM MINUTES</label>
+            <input type="number" id="comp-custom-duration-val" class="comp-text-input" min="5" max="360" value="50" oninput="MFFocusCompanion.updateSetupPreview()">
+        </div>
+
+        <!-- Goal Input -->
+        <div class="comp-input-group">
+            <label class="comp-input-label">TODAY'S TARGET / CHAPTER</label>
+            <input type="text" id="comp-setup-goal-input" class="comp-text-input" placeholder="e.g. Rotational Motion Lecture 3" oninput="MFFocusCompanion.updateSetupPreview()">
+            <div class="comp-suggestions">
+                <span class="comp-chip-quick" onclick="MFFocusCompanion.setGoalSuggestion('Finish Lecture 3')">Finish Lecture 3</span>
+                <span class="comp-chip-quick" onclick="MFFocusCompanion.setGoalSuggestion('Complete 25 Questions')">Complete 25 Questions</span>
+                <span class="comp-chip-quick" onclick="MFFocusCompanion.setGoalSuggestion('Revise Rotational Motion')">Revise Rotational Motion</span>
+                <span class="comp-chip-quick" onclick="MFFocusCompanion.setGoalSuggestion('Study Chemical Bonding')">Study Chemical Bonding</span>
+            </div>
+        </div>
+
+        <!-- Companion Reaction Preview -->
+        <div class="comp-preview-bubble">
+            <div class="comp-preview-avatar comp-avatar-slot"></div>
+            <div class="comp-preview-text" id="comp-setup-preview-text">"90 minutes. Alright. You don't have to think about the whole 90. Just stay with me."</div>
+        </div>
+
+        <!-- Start Button -->
+        <button class="comp-btn-primary" onclick="MFFocusCompanion.startSession()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.15em; margin-right: 6px;"><path d="M11 17l-5-5a3 3 0 0 1 4.24-4.24L12 9.5l1.76-1.74a3 3 0 0 1 4.24 4.24L13 17"></path><path d="M14 14l3.5 3.5a2.5 2.5 0 0 1-3.5 3.5L8.5 15.5"></path><path d="M2 13l3.5-3.5"></path><path d="M22 13l-3.5-3.5"></path></svg>START TOGETHER
+        </button>
+    </div>
+</div>
+
+<!-- 5. EARLY PAUSE INTERVENTION MODAL -->
+<div id="companion-intervention-modal" class="modal-overlay" style="display: none; z-index: 99992;">
+    <div class="modal-content comp-modal-card">
+        <div class="comp-modal-header">
+            <div class="comp-modal-title-group">
+                <span class="comp-modal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5a3 3 0 0 1 4.24-4.24L12 9.5l1.76-1.74a3 3 0 0 1 4.24 4.24L13 17"></path><path d="M14 14l3.5 3.5a2.5 2.5 0 0 1-3.5 3.5L8.5 15.5"></path><path d="M2 13l3.5-3.5"></path><path d="M22 13l-3.5-3.5"></path></svg></span>
+                <div>
+                    <h2 class="comp-modal-title" id="comp-intervention-intro">Hey… hold on.</h2>
+                    <p class="comp-modal-subtitle" id="comp-intervention-stats">Checking in on your study commitment.</p>
+                </div>
+            </div>
+            <button class="comp-modal-close-btn" onclick="MFFocusCompanion.closeModal('companion-intervention-modal')">&times;</button>
+        </div>
+
+        <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.5; margin: 0 0 16px 0;">
+            Do you actually need to stop, or are you just feeling like stopping?
+        </p>
+
+        <!-- 3 Choices -->
+        <div class="comp-intervention-choices">
+            <div class="comp-choice-card choice-life" onclick="MFFocusCompanion.selectSomethingCameUp()">
+                <div class="comp-choice-left">
+                    <span class="comp-choice-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><polyline points="16 10 11 15 8 12"></polyline></svg></span>
+                    <div class="comp-choice-text">
+                        <span class="comp-choice-title">Something came up</span>
+                        <span class="comp-choice-desc">Real life comes first. Safe pause.</span>
+                    </div>
+                </div>
+                <span class="comp-choice-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+            </div>
+
+            <div class="comp-choice-card choice-struggling" onclick="MFFocusCompanion.selectStruggling()">
+                <div class="comp-choice-left">
+                    <span class="comp-choice-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>
+                    <div class="comp-choice-text">
+                        <span class="comp-choice-title">I'm struggling</span>
+                        <span class="comp-choice-desc">Give me just 5 more minutes of focus.</span>
+                    </div>
+                </div>
+                <span class="comp-choice-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+            </div>
+
+            <div class="comp-choice-card choice-stop" onclick="MFFocusCompanion.selectWantToStop()">
+                <div class="comp-choice-left">
+                    <span class="comp-choice-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></span>
+                    <div class="comp-choice-text">
+                        <span class="comp-choice-title">I still want to stop</span>
+                        <span class="comp-choice-desc">Check commitment and confirm with code.</span>
+                    </div>
+                </div>
+                <span class="comp-choice-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 6. RESCUE MODE PROMPT MODAL (AFTER 5 MINS OF RESCUE FOCUS) -->
+<div id="companion-rescue-modal" class="modal-overlay" style="display: none; z-index: 99993;">
+    <div class="modal-content comp-modal-card" style="text-align: center;">
+        <div style="display: flex; justify-content: center; margin-bottom: 12px; color: var(--comp-accent-cyan);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+        <h2 class="comp-modal-title" style="margin-bottom: 6px;">Rescue Sprint Complete!</h2>
+        <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5; margin: 0 0 20px 0;">
+            See? You pushed through the friction and made it through another five minutes of focus.
+        </p>
+
+        <div style="display: flex; gap: 12px;">
+            <button class="comp-btn-secondary" style="flex: 1;" onclick="MFFocusCompanion.selectWantToStop()">I Still Want To Stop</button>
+            <button class="comp-btn-primary" style="flex: 1.5;" onclick="MFFocusCompanion.resumeAfterRescue()">CONTINUE STUDYING</button>
+        </div>
+    </div>
+</div>
+
+<!-- 7. THE 3D COMPANION PHONE RITUAL (SIGNATURE STOP CONFIRMATION) -->
+<div id="companion-phone-modal" class="modal-overlay" style="display: none; z-index: 99994;">
+    <div class="modal-content comp-modal-card" style="text-align: center;">
+        <h2 class="comp-modal-title">One Last Check</h2>
+        <p style="color: #94a3b8; font-size: 0.85rem; margin: 4px 0 16px 0;" id="comp-phone-stats-text">
+            If you really want to stop, enter the code below.
+        </p>
+
+        <!-- 3D Phone Mockup with Code -->
+        <div class="comp-phone-container">
+            <div class="comp-3d-phone">
+                <div class="comp-phone-notch"></div>
+                <div class="comp-phone-screen">
+                    <span class="comp-phone-prompt">COMPANION CONFIRMATION</span>
+                    <div class="comp-phone-code-display" id="comp-phone-code-val">7 3 9 4 2</div>
+                    <span class="comp-phone-time-left">Expires in 90 seconds</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5-Digit Inputs -->
+        <div class="comp-digit-inputs" id="comp-digit-inputs-wrap">
+            <input type="text" inputmode="numeric" maxlength="1" class="comp-digit-box" id="comp-digit-1" autofocus>
+            <input type="text" inputmode="numeric" maxlength="1" class="comp-digit-box" id="comp-digit-2">
+            <input type="text" inputmode="numeric" maxlength="1" class="comp-digit-box" id="comp-digit-3">
+            <input type="text" inputmode="numeric" maxlength="1" class="comp-digit-box" id="comp-digit-4">
+            <input type="text" inputmode="numeric" maxlength="1" class="comp-digit-box" id="comp-digit-5">
+        </div>
+        <div class="comp-digit-error-text" id="comp-digit-error"></div>
+
+        <div style="margin-top: 14px;">
+            <button class="comp-btn-secondary" style="width: 100%;" onclick="MFFocusCompanion.closeModal('companion-phone-modal')">
+                Stay In The Session
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 8. SESSION COMPLETION CELEBRATION MODAL (BREAKS OFFERED ONLY HERE!) -->
+<div id="companion-completion-modal" class="modal-overlay" style="display: none; z-index: 99995;">
+    <div class="modal-content comp-modal-card" style="text-align: center;">
+        <div style="display: flex; justify-content: center; margin-bottom: 12px; color: var(--comp-accent-cyan);"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"></path><path d="M19 16l.75 2.25L22 19l-2.25.75L19 22l-.75-2.25L16 19l2.25-.75z"></path><path d="M5 16l.75 2.25L8 19l-2.25.75L5 22l-.75-2.25L2 19l2.25-.75z"></path></svg></div>
+        <h2 class="comp-modal-title" style="color: var(--comp-accent-cyan); font-size: 1.8rem;">SESSION COMPLETE!</h2>
+        <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.5; margin: 12px 0 24px 0;" id="comp-complete-summary-text">
+            You said you'd stay for 90 minutes. And you did.
+        </p>
+
+        <div style="display: flex; gap: 12px;">
+            <button class="comp-btn-secondary" style="flex: 1;" onclick="MFFocusCompanion.takeBreakAfterCompletion()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.15em; margin-right: 6px;"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>Take A Break
+            </button>
+            <button class="comp-btn-primary" style="flex: 1.5;" onclick="MFFocusCompanion.continueStudyingAfterCompletion()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.15em; margin-right: 6px;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>NEXT SPRINT
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 9. REBUILT COMPANION PREFERENCES MODAL (CONTROL CENTER ARCHITECTURE) -->
+<div id="companion-settings-modal" class="modal-overlay" style="display: none; z-index: 99990;">
+    <div class="modal-content comp-modal-card">
+        <div class="comp-modal-header">
+            <div class="comp-modal-title-group">
+                <span class="comp-modal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+                <div>
+                    <h2 class="comp-modal-title">Companion Preferences</h2>
+                    <p class="comp-modal-subtitle">Control center for your study companion.</p>
+                </div>
+            </div>
+            <button class="comp-modal-close-btn" onclick="MFFocusCompanion.closeModal('companion-settings-modal')">&times;</button>
+        </div>
+
+        <div class="comp-settings-scroll-body">
+            <!-- Section: Appearance -->
+            <div class="comp-settings-section">
+                <span class="comp-section-title">Appearance</span>
+                <div class="comp-setting-row">
+                    <div class="comp-setting-info">
+                        <span class="comp-setting-name">Widget Visibility</span>
+                        <span class="comp-setting-desc">Always visible on desktop or compact mini-pill.</span>
+                    </div>
+                    <div class="comp-custom-select" data-field="visibilityMode" style="width: 140px;">
+                        <div class="comp-select-trigger">
+                            <span class="comp-select-val">Always Visible</span>
+                            <span style="font-size: 0.7rem; opacity: 0.6;">▼</span>
+                        </div>
+                        <div class="comp-select-options">
+                            <div class="comp-select-option selected" data-val="always">
+                                <span class="comp-opt-label">Always Visible</span>
+                            </div>
+                            <div class="comp-select-option" data-val="compact">
+                                <span class="comp-opt-label">Compact Pill</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Personality -->
+            <div class="comp-settings-section">
+                <span class="comp-section-title">Personality Profile</span>
+                <div class="comp-personality-grid">
+                    <div class="comp-personality-card active" data-val="warm">
+                        <div class="comp-pcard-header">
+                            <span class="comp-pcard-title">Warm &amp; Supportive</span>
+                            <span style="display: inline-flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg></span>
+                        </div>
+                        <span class="comp-pcard-desc">Friendly, encouraging, and emotionally aware.</span>
+                    </div>
+
+                    <div class="comp-personality-card" data-val="calm">
+                        <div class="comp-pcard-header">
+                            <span class="comp-pcard-title">Calm &amp; Stoic</span>
+                            <span style="display: inline-flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path></svg></span>
+                        </div>
+                        <span class="comp-pcard-desc">Quiet companion with minimal interruptions.</span>
+                    </div>
+
+                    <div class="comp-personality-card" data-val="playful">
+                        <div class="comp-pcard-header">
+                            <span class="comp-pcard-title">Playful &amp; Witty</span>
+                            <span style="display: inline-flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span>
+                        </div>
+                        <span class="comp-pcard-desc">Subtle humor and clever milestone remarks.</span>
+                    </div>
+
+                    <div class="comp-personality-card" data-val="firm">
+                        <div class="comp-pcard-header">
+                            <span class="comp-pcard-title">Firm &amp; Disciplined</span>
+                            <span style="display: inline-flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></span>
+                        </div>
+                        <span class="comp-pcard-desc">Uncompromising focus and stronger accountability.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Interaction -->
+            <div class="comp-settings-section">
+                <span class="comp-section-title">Interaction &amp; Timing</span>
+                <div class="comp-setting-row">
+                    <div class="comp-setting-info">
+                        <span class="comp-setting-name">Milestone Frequency</span>
+                        <span class="comp-setting-desc">Encouragement checkpoints during deep focus.</span>
+                    </div>
+                    <div class="comp-custom-select" data-field="frequency" style="width: 170px;">
+                        <div class="comp-select-trigger">
+                            <span class="comp-select-val">Balanced Checkpoints</span>
+                            <span style="font-size: 0.7rem; opacity: 0.6;">▼</span>
+                        </div>
+                        <div class="comp-select-options">
+                            <div class="comp-select-option selected" data-val="balanced">
+                                <span class="comp-opt-label">Balanced Checkpoints</span>
+                            </div>
+                            <div class="comp-select-option" data-val="minimal">
+                                <span class="comp-opt-label">Minimal (Halfway &amp; End)</span>
+                            </div>
+                            <div class="comp-select-option" data-val="low">
+                                <span class="comp-opt-label">Low (Every 30m)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comp-setting-row">
+                    <div class="comp-setting-info">
+                        <span class="comp-setting-name">Subtle Milestone Humor</span>
+                        <span class="comp-setting-desc">Occasional lighthearted remarks.</span>
+                    </div>
+                    <label class="comp-toggle-switch">
+                        <input type="checkbox" id="comp-set-humor" checked>
+                        <span class="comp-toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="comp-setting-row">
+                    <div class="comp-setting-info">
+                        <span class="comp-setting-name">Long-Return Rhetorical Humor</span>
+                        <span class="comp-setting-desc">Witty greetings ONLY after explicit long breaks.</span>
+                    </div>
+                    <label class="comp-toggle-switch">
+                        <input type="checkbox" id="comp-set-long-return" checked>
+                        <span class="comp-toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="comp-setting-row">
+                    <div class="comp-setting-info">
+                        <span class="comp-setting-name">Early-Stop Guidance</span>
+                        <span class="comp-setting-desc">Gentle pause check &amp; 3D Phone 5-digit ritual.</span>
+                    </div>
+                    <label class="comp-toggle-switch">
+                        <input type="checkbox" id="comp-set-guidance" checked>
+                        <span class="comp-toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Section: Privacy & Storage -->
+            <div class="comp-settings-section">
+                <span class="comp-section-title">Privacy &amp; Local Storage</span>
+                <div class="comp-setting-row" style="background: rgba(100, 255, 218, 0.04); border-color: rgba(100, 255, 218, 0.15);">
+                    <div class="comp-setting-info">
+                        <span class="comp-setting-name" style="color: #64ffda;">Local-First Storage</span>
+                        <span class="comp-setting-desc">100% stored on this device in IndexedDB. Zero cloud tracking.</span>
+                    </div>
+                    <span style="font-size: 0.78rem; font-weight: 800; color: #30d158; background: rgba(48, 209, 88, 0.12); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(48, 209, 88, 0.3);">ACTIVE</span>
+                </div>
+
+                <div class="comp-setting-row" style="background: rgba(255, 69, 58, 0.04); border-color: rgba(255, 69, 58, 0.15);">
+                    <div class="comp-setting-info">
+                        <span class="comp-setting-name" style="color: #ff6b6b;">Clear Companion Data</span>
+                        <span class="comp-setting-desc">Removes only Companion records stored on this device.</span>
+                    </div>
+                    <button type="button" class="comp-btn-secondary" style="padding: 6px 14px; font-size: 0.78rem; border-color: rgba(255,69,58,0.4); color: #ff6b6b;" onclick="MFFocusCompanion.clearCompanionData()">
+                        Clear Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="comp-btn-primary" onclick="MFFocusCompanion.saveSettingsFromUI()">
+                SAVE PREFERENCES
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 10. FOCUS RECORDS & MILESTONES MODAL -->
+<div id="companion-records-modal" class="modal-overlay" style="display: none; z-index: 99990;">
+    <div class="modal-content comp-modal-card">
+        <div class="comp-modal-header">
+            <div class="comp-modal-title-group">
+                <span class="comp-modal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 4h16v7a8 8 0 0 1-16 0V4z"></path><path d="M12 17v4"></path><path d="M8 21h8"></path></svg></span>
+                <div>
+                    <h2 class="comp-modal-title">Companion Focus Records</h2>
+                    <p class="comp-modal-subtitle">Milestones kept with your study companion.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="comp-records-grid">
+            <div class="comp-record-card highlight">
+                <span class="comp-record-label">Longest Focus Session</span>
+                <span class="comp-record-val" id="comp-rec-longest">0h 0m</span>
+            </div>
+            <div class="comp-record-card highlight">
+                <span class="comp-record-label">Commitments Kept</span>
+                <span class="comp-record-val" id="comp-rec-kept">0</span>
+            </div>
+            <div class="comp-record-card">
+                <span class="comp-record-label">Rescue Sprints Won</span>
+                <span class="comp-record-val" id="comp-rec-rescue">0</span>
+            </div>
+            <div class="comp-record-card">
+                <span class="comp-record-label">Total Companion Focus</span>
+                <span class="comp-record-val" id="comp-rec-total-hours">0.0h</span>
+            </div>
+        </div>
+
+        <div style="background: rgba(100, 255, 218, 0.08); border: 1px solid rgba(100, 255, 218, 0.2); border-radius: 16px; padding: 14px 18px; text-align: center; margin-bottom: 20px;">
+            <span style="font-size: 0.85rem; color: #94a3b8; display: block; margin-bottom: 4px;">Focus Promise Success Rate</span>
+            <span style="font-size: 1.6rem; font-weight: 900; color: #64ffda; font-family: 'JetBrains Mono', monospace;" id="comp-rec-rate">100%</span>
+        </div>
+
+        <button class="comp-btn-secondary" style="width: 100%;" onclick="MFFocusCompanion.closeModal('companion-records-modal')">
+            Close Records
+        </button>
+    </div>
+</div>

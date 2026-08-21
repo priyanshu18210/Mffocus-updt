@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /_health_test/{uid} {
+      allow read, write: if true;
+    }
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /dailyChampions/{date} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /weeklyChampions/{weekKey} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /groups/{groupId} {
+      allow read, write: if request.auth != null;
+    }
+    match /chats/{chatId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

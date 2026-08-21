@@ -1,0 +1,17 @@
+﻿# Dependencies
+node_modules/
+
+# Environment and sensitive credential files
+.env
+.env.*
+*.env
+*.pem
+*.key
+*service-account*.json
+credentials.json
+client_secret*.json
+
+# Logs & temporary files
+*.log
+.DS_Store
+Thumbs.db

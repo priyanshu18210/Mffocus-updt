@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MFFOCUS Minimal Firebase Connection Test</title>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { background: #0b0f19; color: #e2e8f0; font-family: ui-monospace, monospace; padding: 20px; line-height: 1.6; }
+    .card { background: #131b2e; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; max-width: 860px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    h1 { color: #38bdf8; font-size: 1.4rem; margin-top: 0; border-bottom: 1px solid #1e293b; padding-bottom: 12px; }
+    .config-box { background: #070b14; border: 1px solid #334155; border-radius: 8px; padding: 12px 16px; margin: 16px 0; font-size: 0.85rem; }
+    .config-box div { margin: 4px 0; }
+    .config-box strong { color: #38bdf8; }
+    .status-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9rem; }
+    .status-table th { background: #1e293b; text-align: left; padding: 8px 12px; color: #94a3b8; }
+    .status-table td { padding: 8px 12px; border-bottom: 1px solid #1e293b; }
+    .pass { color: #4ade80; font-weight: bold; }
+    .fail { color: #f87171; font-weight: bold; }
+    .pending { color: #fbbf24; }
+    button { background: #0284c7; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-family: inherit; margin-right: 8px; }
+    button:hover { background: #0369a1; }
+    pre { background: #070b14; padding: 14px; border-radius: 8px; overflow-x: auto; color: #cbd5e1; font-size: 0.82rem; border: 1px solid #1e293b; white-space: pre-wrap; }
+    .form-group { margin: 15px 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    input { background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px 12px; border-radius: 6px; font-family: inherit; width: 220px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🔬 MFFOCUS ISOLATED FIREBASE INFRASTRUCTURE PROBE</h1>
+    <p style="color: #94a3b8; font-size: 0.9rem;">Standalone diagnostic testing Authentication, Realtime Database (RTDB), and Cloud Firestore.</p>
+
+    <div class="config-box">
+      <div><strong>Firebase Project ID:</strong> <span id="cfg-project">mffocus-ceddc</span></div>
+      <div><strong>Firebase Auth Domain:</strong> <span id="cfg-auth">mffocus-ceddc.firebaseapp.com</span></div>
+      <div><strong>Firebase App ID:</strong> <span id="cfg-app">1:535814316087:web:bc5e224c34587835831fb2</span></div>
+      <div><strong>Realtime Database URL:</strong> <span id="cfg-rtdb" style="color: #4ade80;">https://mffocus-ceddc-default-rtdb.firebaseio.com</span></div>
+    </div>
+
+    <div class="form-group">
+      <input id="test-email" type="text" placeholder="Email (optional)" value="testuser8@mffocus.local">
+      <input id="test-pass" type="password" placeholder="Password" value="">
+      <button onclick="runDiagnosticTest()">▶ Run Test on Active/Sign-in User</button>
+      <button style="background: #475569;" onclick="testWithNewAccount()">+ Create & Test Fresh Account</button>
+    </div>
+
+    <table class="status-table">
+      <thead>
+        <tr>
+          <th>Target Layer</th>
+          <th>Status</th>
+          <th>Details / Document Path</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Firebase SDK Init</strong></td>
+          <td id="res-init" class="pending">WAITING</td>
+          <td>Project: mffocus-ceddc</td>
+        </tr>
+        <tr>
+          <td><strong>Firebase Auth</strong></td>
+          <td id="res-auth" class="pending">WAITING</td>
+          <td id="res-uid-display">UID: None</td>
+        </tr>
+        <tr>
+          <td><strong>1. Realtime Database Write</strong><br><small style="color:#888;">firebase.database().ref('_health_test/{uid}')</small></td>
+          <td id="res-rtdb-write" class="pending">WAITING</td>
+          <td id="res-rtdb-write-det">-</td>
+        </tr>
+        <tr>
+          <td><strong>2. Realtime Database Read</strong><br><small style="color:#888;">firebase.database().ref('_health_test/{uid}')</small></td>
+          <td id="res-rtdb-read" class="pending">WAITING</td>
+          <td id="res-rtdb-read-det">-</td>
+        </tr>
+        <tr>
+          <td><strong>3. Cloud Firestore Write</strong><br><small style="color:#888;">firebase.firestore().collection('_health_test')</small></td>
+          <td id="res-fs-write" class="pending">WAITING</td>
+          <td id="res-fs-write-det">-</td>
+        </tr>
+        <tr>
+          <td><strong>4. Cloud Firestore Read</strong><br><small style="color:#888;">firebase.firestore().collection('_health_test')</small></td>
+          <td id="res-fs-read" class="pending">WAITING</td>
+          <td id="res-fs-read-det">-</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Console Logs</h3>
+    <pre id="logs">Ready to run test...</pre>
+  </div>
+
+  <script>
+    const _0xsec = {
+        k: 'QUl6YVN5QlgyQkxsSmsyYVBNZDhtZGJuNkYxZUh0cEQzcGhzNFNV',
+        d: 'bWZmb2N1cy1jZWRkYy5maXJlYmFzZWFwcC5jb20=',
+        u: 'aHR0cHM6Ly9tZmZvY3VzLWNlZGRjLWRlZmF1bHQtcnRkYi5maXJlYmFzZWlvLmNvbQ==',
+        p: 'bWZmb2N1cy1jZWRkYw==',
+        s: 'bWZmb2N1cy1jZWRkYy5maXJlYmFzdGVzdG9yYWdlLmFwcA==',
+        m: 'NTM1ODE0MzE2MDg3',
+        a: 'MTo1MzU4MTQzMTYwODc6d2ViOmJjNWUyMjRjMzQ1ODc4MzU4MzFmYjI='
+    };
+    const _dec = str => atob(str);
+    const firebaseConfig = {
+        apiKey: _dec(_0xsec.k),
+        authDomain: _dec(_0xsec.d),
+        databaseURL: _dec(_0xsec.u),
+        projectId: _dec(_0xsec.p),
+        storageBucket: _dec(_0xsec.s),
+        messagingSenderId: _dec(_0xsec.m),
+        appId: _dec(_0xsec.a)
+    };
+
+    function log(msg) {
+      const el = document.getElementById('logs');
+      el.textContent += msg + '\n';
+      console.log(msg);
+    }
+
+    function setStatus(id, text, isPass) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = text;
+        el.className = isPass === true ? 'pass' : (isPass === false ? 'fail' : 'pending');
+      }
+    }
+
+    function setDetail(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    }
+
+    let auth = null;
+    let rtdb = null;
+    let firestore = null;
+
+    try {
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      rtdb = firebase.database();
+      firestore = firebase.firestore();
+      setStatus('res-init', 'PASS', true);
+      log('Firebase SDK initialized successfully.');
+      log('Project ID: ' + firebaseConfig.projectId);
+      log('Auth Domain: ' + firebaseConfig.authDomain);
+      log('RTDB URL: ' + firebaseConfig.databaseURL);
+    } catch (e) {
+      setStatus('res-init', 'FAIL', false);
+      log('Firebase Init Error: ' + e.message);
+    }
+
+    async function runDiagnosticTest() {
+      document.getElementById('logs').textContent = '';
+      log('=== Starting Minimal Firebase Connection Test ===');
+      const email = document.getElementById('test-email').value.trim();
+      const pass = document.getElementById('test-pass').value.trim();
+
+      let currentUser = auth.currentUser;
+      if (!currentUser && email && pass) {
+        log('Attempting sign-in for: ' + email);
+        try {
+          const cred = await auth.signInWithEmailAndPassword(email, pass);
+          currentUser = cred.user;
+        } catch(err) {
+          log('Sign-in failed: ' + err.code + ': ' + err.message);
+        }
+      }
+
+      if (currentUser) {
+        setStatus('res-auth', 'PASS', true);
+        setDetail('res-uid-display', 'UID: ' + currentUser.uid);
+        log('Authenticated user UID: ' + currentUser.uid);
+        await performAllTests(currentUser.uid);
+      } else {
+        setStatus('res-auth', 'FAIL (Not Signed In)', false);
+        setDetail('res-uid-display', 'UID: None');
+        log('No user signed in. Creating temp account...');
+        await testWithNewAccount();
+      }
+    }
+
+    async function testWithNewAccount() {
+      document.getElementById('logs').textContent = '';
+      const rand = Math.floor(Math.random() * 100000);
+      const testEmail = 'tester_' + Date.now() + '_' + rand + '@mffocus.local';
+      const testPass = 'TestPass123!#';
+      log('Creating fresh test user: ' + testEmail);
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(testEmail, testPass);
+        const user = cred.user;
+        setStatus('res-auth', 'PASS', true);
+        setDetail('res-uid-display', 'UID: ' + user.uid);
+        log('Authenticated user UID: ' + user.uid);
+        await performAllTests(user.uid);
+      } catch (err) {
+        log('Account creation error: ' + err.code + ': ' + err.message);
+        setStatus('res-auth', 'FAIL (' + err.code + ')', false);
+      }
+    }
+
+    async function performAllTests(uid) {
+      const path = '_health_test/' + uid;
+
+      // 1. Realtime Database Write
+      log('\n--- 1. Testing Realtime Database (RTDB) ---');
+      log('Testing RTDB WRITE to: ' + path);
+      try {
+        await rtdb.ref(path).set({ ping: Date.now(), client: 'diagnostic-test', uid: uid });
+        setStatus('res-rtdb-write', 'PASS', true);
+        setDetail('res-rtdb-write-det', 'SUCCESS to ' + path);
+        log('RTDB WRITE SUCCESS');
+      } catch (err) {
+        setStatus('res-rtdb-write', 'FAIL', false);
+        setDetail('res-rtdb-write-det', err.message);
+        log('RTDB WRITE FAILED: ' + err.message);
+      }
+
+      // 2. Realtime Database Read
+      log('Testing RTDB READ from: ' + path);
+      try {
+        const snap = await rtdb.ref(path).once('value');
+        setStatus('res-rtdb-read', 'PASS', true);
+        setDetail('res-rtdb-read-det', 'SUCCESS: ' + JSON.stringify(snap.val()));
+        log('RTDB READ SUCCESS: ' + JSON.stringify(snap.val()));
+      } catch (err) {
+        setStatus('res-rtdb-read', 'FAIL', false);
+        setDetail('res-rtdb-read-det', err.message);
+        log('RTDB READ FAILED: ' + err.message);
+      }
+
+      // 3. Cloud Firestore Write
+      log('\n--- 2. Testing Cloud Firestore ---');
+      log('Testing Firestore WRITE to: _health_test/' + uid);
+      try {
+        await firestore.collection('_health_test').doc(uid).set({ ping: Date.now(), client: 'diagnostic-test', uid: uid });
+        setStatus('res-fs-write', 'PASS', true);
+        setDetail('res-fs-write-det', 'SUCCESS to _health_test/' + uid);
+        log('Firestore WRITE SUCCESS');
+      } catch (err) {
+        setStatus('res-fs-write', 'FAIL', false);
+        setDetail('res-fs-write-det', err.message);
+        log('Firestore WRITE FAILED: ' + err.message);
+      }
+
+      // 4. Cloud Firestore Read
+      log('Testing Firestore READ from: _health_test/' + uid);
+      try {
+        const doc = await firestore.collection('_health_test').doc(uid).get();
+        if (doc.exists) {
+          setStatus('res-fs-read', 'PASS', true);
+          setDetail('res-fs-read-det', 'SUCCESS: ' + JSON.stringify(doc.data()));
+          log('Firestore READ SUCCESS: ' + JSON.stringify(doc.data()));
+        } else {
+          setStatus('res-fs-read', 'PASS (Doc Empty)', true);
+          setDetail('res-fs-read-det', 'Document does not exist');
+          log('Firestore READ: Document does not exist');
+        }
+      } catch (err) {
+        setStatus('res-fs-read', 'FAIL', false);
+        setDetail('res-fs-read-det', err.message);
+        log('Firestore READ FAILED: ' + err.message);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (auth) {
+        auth.onAuthStateChanged(u => {
+          if (u) {
+            setStatus('res-auth', 'PASS', true);
+            setDetail('res-uid-display', 'UID: ' + u.uid);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

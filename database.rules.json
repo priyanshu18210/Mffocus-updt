@@ -1,0 +1,232 @@
+{
+  "rules": {
+    "_health_test": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "users": {
+      ".read": true,
+      "$userId": {
+        ".read": true,
+        ".write": "auth != null"
+      }
+    },
+    "usernames": {
+      ".read": true,
+      "$username": {
+        ".read": true,
+        ".write": "auth != null"
+      }
+    },
+    "oldUsernames": {
+      ".read": true,
+      "$username": {
+        ".read": true,
+        ".write": "auth != null"
+      }
+    },
+    "dailyChampions": {
+      ".read": true,
+      "$date": {
+        ".read": true,
+        "$username": {
+          ".read": true,
+          ".write": "auth != null"
+        }
+      }
+    },
+    "weeklyChampions": {
+      ".read": true,
+      "$weekKey": {
+        ".read": true,
+        "$username": {
+          ".read": true,
+          ".write": "auth != null"
+        }
+      }
+    },
+    "streakRestoreGrants": {
+      "$username": {
+        ".read": "auth != null",
+        "$weekKey": {
+          ".write": "auth != null"
+        }
+      }
+    },
+    "streakRestoreUsages": {
+      "$username": {
+        ".read": "auth != null",
+        "$missedDate": {
+          ".write": "auth != null"
+        }
+      }
+    },
+    "friends": {
+      "$username": {
+        ".read": "auth != null",
+        "$friendUsername": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    },
+    "friendRequests": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$receiverUsername": {
+        ".read": "auth != null",
+        "$senderUsername": {
+          ".write": "auth != null"
+        }
+      }
+    },
+    "giftTransactions": {
+      "$username": {
+        ".read": "auth != null",
+        "$txId": {
+          ".write": "auth != null"
+        }
+      }
+    },
+    "dailyGiftUsage": {
+      "$username": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "notifications": {
+      "$username": {
+        ".read": "auth != null",
+        "$notifId": {
+          ".write": "auth != null"
+        }
+      }
+    },
+    "usernameSearch": {
+      ".read": true,
+      "$username": {
+        ".write": "auth != null"
+      }
+    },
+    "emailIndex": {
+      ".read": true,
+      "$email": {
+        ".read": true,
+        ".write": "auth != null"
+      }
+    },
+    "googleUsers": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "reports": {
+      ".read": "auth != null",
+      "$reportId": {
+        ".write": "auth != null"
+      }
+    },
+    "supportReports": {
+      "$reportId": {
+        ".write": "!data.exists()"
+      }
+    },
+    "chats": {
+      "$groupCode": {
+        "$date": {
+          ".read": "auth != null",
+          "$msgId": {
+            ".write": "auth != null && !data.exists()",
+            ".validate": "newData.hasChildren(['u', 'm', 't']) && newData.child('m').val().length <= 500"
+          }
+        }
+      }
+    },
+    "groups": {
+      "$groupCode": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "arenaProfiles": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$username": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "arenaMatches": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$matchId": {
+        ".write": "auth != null"
+      }
+    },
+    "arenaInvites": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$inviteId": {
+        ".write": "auth != null"
+      }
+    },
+    "arenaMatchmaking": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$requestId": {
+        ".write": "auth != null"
+      }
+    },
+    "arenaLeaderboard": {
+      ".read": true,
+      ".write": "auth != null",
+      "$seasonId": {
+        ".write": "auth != null"
+      }
+    },
+    "arenaHistory": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$username": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "studyRooms": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$roomId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "studyRoomSignals": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$roomId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "studyRoomInvites": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$inviteId": {
+        ".write": "auth != null"
+      }
+    },
+    "studyMeet": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "rooms": {
+        "$roomId": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    }
+  }
+}
